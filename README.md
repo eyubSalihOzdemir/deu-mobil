@@ -12,3 +12,5 @@ This is a an Android app for Dokuz Eylul University students. You can make use o
 - It makes checking grades much easier than normal, you don't have to struggle with badly designed official website.
 - Check cafeteria and weekly food information, library occupancy rate, campus weather forecast, notifications.
 - Download your transcript as pdf with one click.
+
+![alt text](https://github.com/eyubSalihOzdemir/deu-mobil/blob/master/readme-image/git-image.png?raw=true)
