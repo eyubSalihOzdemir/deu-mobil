@@ -1,4 +1,4 @@
-# DUE Mobil
+# DEU Mobil
 
 My first native Android app, made for an easier use of school websites and tools for Dokuz Eylul University students.
 #### It's current in early access and still being developed.
