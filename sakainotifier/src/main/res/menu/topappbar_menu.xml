@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/information_item"
+        android:icon="@drawable/ic_info_outlined"
+        android:title=""
+        android:enabled="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/settings_item"
+        android:enabled="false"
+        android:title="Ayarlar" />
+    <item android:title="Ders Programım"
+        android:id="@+id/show_syllable_item"
+        android:enabled="false"/>
+    <item android:title="Transkript İndir"
+        android:id="@+id/transcript_download"
+        android:enabled="true"/>
+    <item android:title="Sorun/Öneri Bildir"
+        android:id="@+id/contact_item"
+        android:enabled="true"/>
+    <item android:title="Çıkış"
+        android:id="@+id/logout_item"
+        android:enabled="true"/>
+
+</menu>

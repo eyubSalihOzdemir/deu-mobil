@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/main_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_theme_light_surface"
+    android:tag="profile"
+    tools:context=".fragments.ProfileFragment">
+
+    <LinearLayout
+        android:id="@+id/welcome_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintWidth_percent="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                style="@style/Widget.Material3.Toolbar"
+                android:id="@+id/topAppBar"
+                android:layout_marginTop="5dp"
+                android:layout_marginHorizontal="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:menu="@menu/topappbar_menu">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/title_welcome"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hoşgeldin,"
+                        android:maxLines="1"
+                        android:autoSizeTextType="uniform"
+                        android:textSize="26sp"/>
+                    <TextView
+                        android:id="@+id/title_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Student Name"
+                        android:maxLines="1"
+                        android:autoSizeTextType="uniform"
+                        android:textSize="30sp"/>
+                </LinearLayout>
+
+
+            </com.google.android.material.appbar.MaterialToolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        app:layout_constraintTop_toBottomOf="@id/welcome_layout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <!--
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="under development"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+        -->
+
+    <!--
+    <Button
+        android:id="@+id/theme_button_red"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change To Red"
+        android:layout_marginTop="500dp"
+        android:layout_marginLeft="20dp"
+        android:backgroundTint="@color/md_red_theme_light_primary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <Button
+        android:id="@+id/theme_button_purple"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change To Purple"
+        android:layout_marginTop="500dp"
+        android:layout_marginRight="20dp"
+        android:backgroundTint="@color/md_theme_light_primary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+        -->
+
+    <LinearLayout
+        android:id="@+id/middle_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/welcome_layout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/library_cardview"
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            style="@style/Widget.Material3.CardView.Elevated"
+            app:cardBackgroundColor="@color/md_theme_light_secondaryContainer"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            app:cardCornerRadius="10dp"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.LargeComponent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.LargeComponent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp">
+
+                    <ImageView
+                        android:id="@+id/library_banner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/library_banner_shaded"
+                        android:scaleType="centerCrop" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="5dp"
+                        android:text="Kütüphane"
+                        android:textSize="22sp"
+                        android:textStyle="normal"
+                        android:textColor="@color/md_theme_light_onPrimaryContainer"
+                        style="@style/AudioFileInfoOverlayText"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height=".6dp"
+                    android:layout_marginLeft="8dp"
+                    app:dividerColor="@color/md_theme_light_onPrimaryContainer"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/currentUse"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="Şu anki kullanım: -"
+                        android:maxLines="2"
+                        android:textSize="19sp"
+                        android:textColor="@color/md_theme_light_onPrimaryContainer"
+                        android:layout_gravity="center"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        style="@style/Widget.Material3.CardView.Filled"
+                        app:cardBackgroundColor="@color/md_theme_light_inverseOnSurface"
+                        app:cardElevation="4dp"
+                        app:cardUseCompatPadding="true"
+                        app:cardCornerRadius="10dp"
+                        app:shapeAppearance="@style/ShapeAppearance.Material3.LargeComponent"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.LargeComponent">
+
+                        <TextView
+                            android:id="@+id/percentage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="%\n--"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:layout_gravity="center"
+                            android:textAlignment="center"
+                            android:lineHeight="30dp"
+                            android:textSize="30sp"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/alert_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:text="Toplam kapasite: 525"
+                        android:textSize="12sp"
+                        android:maxLines="1"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/weather_cardview"
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="0dp"
+            style="@style/Widget.Material3.CardView.Elevated"
+            app:cardBackgroundColor="@color/md_theme_light_secondaryContainer"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            app:cardCornerRadius="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.LargeComponent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.LargeComponent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp">
+
+                    <ImageView
+                        android:id="@+id/weather_banner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/weather_banner_shaded"
+                        android:scaleType="centerCrop" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="5dp"
+                        android:text="Hava Durumu"
+                        android:textStyle="normal"
+                        android:textSize="22sp"
+                        android:textColor="@color/md_theme_light_onPrimaryContainer"
+                        style="@style/AudioFileInfoOverlayText"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height=".6dp"
+                    android:layout_marginLeft="8dp"
+                    app:dividerColor="@color/md_theme_light_onPrimaryContainer"/>
+
+                <LinearLayout
+                    android:id="@+id/weather_parent_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/weather_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="8dp"
+                        android:ellipsize="end"
+                        android:text="--"
+                        android:maxLines="2"
+                        android:textSize="19sp"
+                        android:textColor="@color/md_theme_light_onPrimaryContainer"
+                        android:layout_gravity="center"/>
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="0dp"/>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/temperature_card_view"
+                        android:layout_width="85dp"
+                        android:layout_height="80dp"
+                        style="@style/Widget.Material3.CardView.Filled"
+                        app:cardBackgroundColor="@color/md_theme_light_inverseOnSurface"
+                        app:cardElevation="4dp"
+                        app:cardUseCompatPadding="true"
+                        app:cardCornerRadius="10dp"
+                        app:shapeAppearance="@style/ShapeAppearance.Material3.LargeComponent"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.LargeComponent">
+
+                        <TextView
+                            android:id="@+id/temperature_text_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--°C"
+                            android:autoSizeTextType="uniform"
+                            android:maxLines="1"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_gravity="center"
+                            android:textAlignment="center"
+                            android:gravity="center"
+                            android:textSize="24sp"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/icon_card_view"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_marginRight="8dp"
+                        style="@style/Widget.Material3.CardView.Filled"
+                        app:cardBackgroundColor="@color/md_theme_light_inverseOnSurface"
+                        app:cardElevation="4dp"
+                        app:cardUseCompatPadding="true"
+                        app:cardCornerRadius="10dp"
+                        app:shapeAppearance="@style/ShapeAppearance.Material3.LargeComponent"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.LargeComponent">
+
+                        <ImageView
+                            android:id="@+id/weather_icon_image_view"
+                            android:layout_gravity="center"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_centerInParent="true"
+                            android:scaleType="centerCrop" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/weather_subtext"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:text="Hava durumu tarihi"
+                        android:textSize="12sp"
+                        android:maxLines="1"/>
+
+                    <TextView
+                        android:id="@+id/weather_wind"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="4dp"
+                        android:text="Rüzgar: -- kph"
+                        android:textSize="16sp"
+                        android:textAlignment="textEnd"
+                        android:maxLines="1"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/apod_cardview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/middle_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        style="@style/Widget.Material3.CardView.Elevated"
+        app:cardBackgroundColor="@color/md_theme_light_secondaryContainer"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:cardCornerRadius="10dp"
+        app:shapeAppearance="@style/ShapeAppearance.Material3.LargeComponent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.LargeComponent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textAlignment="center"
+                android:layout_marginTop="2dp"
+                android:text="Günün Astronomi Fotoğrafı"
+                android:autoSizeTextType="uniform"
+                android:textColor="@color/md_theme_light_onPrimaryContainer"
+                style="@style/AudioFileInfoOverlayText"/>
+
+            <ImageView
+                android:id="@+id/apod_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!--
+    <LinearLayout
+        android:id="@+id/bottom_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintWidth_percent=".9">
+
+        <Button
+            style="@style/ThemeOverlay.Material3.Button.ElevatedButton"
+            android:id="@+id/logout_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Çıkış"
+            android:drawablePadding="6dp"
+            android:drawableRight="@drawable/ic_exit"
+            android:drawableTint="@color/md_theme_light_onPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <Button
+            style="@style/ThemeOverlay.Material3.Button.ElevatedButton"
+            android:id="@+id/contact_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="İletişim"
+            android:drawableTint="@color/md_theme_light_onPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:drawableRight="@drawable/ins_lg"
+            android:drawablePadding="6dp" />
+
+
+
+    </LinearLayout>
+    -->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

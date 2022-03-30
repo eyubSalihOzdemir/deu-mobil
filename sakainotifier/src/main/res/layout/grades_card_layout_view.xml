@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+android:layout_marginBottom="5dp">
+
+    <TextView
+        android:id="@+id/exam_name"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vize"
+        android:autoSizeTextType="uniform"
+        android:maxLines="2"
+        android:width="60dp"
+        android:textAlignment="center"
+        android:ellipsize="end"
+        android:layout_marginLeft="5dp"/>
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+    <TextView
+        android:id="@+id/date"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="15/02/21"
+        android:autoSizeTextType="uniform"
+        android:maxLines="1"
+        android:width="60dp"
+        android:textAlignment="center"
+        android:ellipsize="end"/>
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+    <TextView
+        android:id="@+id/first_grade"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="42"
+        android:autoSizeTextType="uniform"
+        android:width="60dp"
+        android:textAlignment="center"
+        android:ellipsize="end"/>
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+    <TextView
+        android:id="@+id/second_grade"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="--"
+        android:autoSizeTextType="uniform"
+        android:width="60dp"
+        android:textAlignment="center"
+        android:ellipsize="end"/>
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+    <TextView
+        android:id="@+id/third_grade"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="56"
+        android:autoSizeTextType="uniform"
+        android:width="60dp"
+        android:textAlignment="center"
+        android:ellipsize="end"
+        android:layout_marginRight="5dp"/>
+
+</LinearLayout>

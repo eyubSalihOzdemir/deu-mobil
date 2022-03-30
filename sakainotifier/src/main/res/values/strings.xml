@@ -1,0 +1,9 @@
+<resources>
+    <string name="channel_name">test</string>
+    <string name="channel_description">channel description</string>
+    <string name="app_name">DEU Mobil</string>
+    <string name="title_profile">Profil</string>
+    <string name="title_food">Yemekhane</string>
+    <string name="title_grades">Notlar</string>
+    <string name="title_alerts">Bildirimler</string>
+</resources>
