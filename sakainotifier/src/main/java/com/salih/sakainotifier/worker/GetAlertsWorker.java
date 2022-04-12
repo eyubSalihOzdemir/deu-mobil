@@ -38,6 +38,10 @@ import com.salih.sakainotifier.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,8 +85,6 @@ public class GetAlertsWorker extends Worker {
         username = user;
         password = pass;
 
-
-
         setForegroundAsync(createForegroundInfo());
 
         postRequest(myContext);
@@ -90,7 +92,7 @@ public class GetAlertsWorker extends Worker {
         // OKHTTP -----------------------------------------------
         CookieManager cookieManager = new CookieManager();
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-        final OkHttpClient client = new OkHttpClient.Builder()
+        OkHttpClient client = new OkHttpClient.Builder()
                 .cookieJar(new JavaNetCookieJar(cookieManager))
                 .build();
 
@@ -99,7 +101,9 @@ public class GetAlertsWorker extends Worker {
                 .add("pw", password)
                 .add("submit", "Giriş")
                 .build();
+
         okhttpLoginCall(client, loginRequestBody);
+        //-------------------------------------------------------
 
         return Result.success();
     }
@@ -221,18 +225,18 @@ public class GetAlertsWorker extends Worker {
         boolean remindWeeklyFood;
         SharedPreferences sharedPreferences = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sharedPreferences.edit();
-        remindWeeklyFood = sharedPreferences.getBoolean("remindWeeklyFood", false);
+        remindWeeklyFood = sharedPreferences.getBoolean("remindWeeklyFood", true);
 
         // yemekhane haftalık reminder
         java.util.Date date = new java.util.Date();
-        if(date.getDay() == 5 && date.getHours() >= 10 && remindWeeklyFood) {
+        if(date.getDay() == 5 && date.getHours() >= 10 && date.getHours() <= 14 && remindWeeklyFood) {
             //showNotif(context, i, fromWhom, title, siteTitle, url);
             //todo: create new function for open deu.pos intent
             showNotif(context, 99, "", "14:30'a kadar vaktin var", "Haftalık yemek yüklemeyi unutma", "https://pos.deu.edu.tr/");
             myEdit.putBoolean("remindWeeklyFood", false);
         }
 
-        if(date.getDay() < 5) {
+        if(date.getDay() != 5) {
             myEdit.putBoolean("remindWeeklyFood", true);
         }
 
@@ -435,6 +439,7 @@ public class GetAlertsWorker extends Worker {
     }
 
     public void okhttpLoginCall(OkHttpClient client, okhttp3.RequestBody requestBody) {
+        final String pvtMsg = "/privateMsg/pvtMsg";
         okhttp3.Request loginRequest = new okhttp3.Request.Builder()
                 .url("https://online.deu.edu.tr/portal/xlogin")
                 .post(requestBody)
@@ -451,20 +456,183 @@ public class GetAlertsWorker extends Worker {
             public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
                 String responseBodyString = response.body().string();
 
-                JSONObject jsonResponseObject = null;
-                try {
-                    jsonResponseObject = new JSONObject(responseBodyString);
-                    //JSONArray jsonArray = jsonResponseObject.getJSONArray("employees");
+                Document doc = Jsoup.parse(responseBodyString);
+                Elements elements = doc.getElementsByAttributeValue("id", "topnav").get(0).children();
 
-                    JSONArray jsonArray = jsonResponseObject.getJSONArray("topnav");
+                // remove "anasayfa" from top navigation list
+                elements.remove(0);
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                for(Element x : elements) {
+                    Log.d("each_element_text", x.text());
+                    Element children = x.child(1);
+                    String url = children.attr("href");
+
+                    okhttpMessagesCall(client, url);
                 }
-
-
             }
         });
+    }
+
+    public void okhttpMessagesCall(OkHttpClient client, String url) {
+        final String pvtMsg = "/privateMsg/pvtMsgHpView";
+        okhttp3.Request messagesRequest = new okhttp3.Request.Builder()
+                .url(url)
+                .build();
+
+        Call call = client.newCall(messagesRequest);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                // do nothing for now...
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                String responseBodyString = response.body().string();
+
+                Document doc = Jsoup.parse(responseBodyString);
+                Elements path = doc.select("#toolMenu > ul");
+                Elements table = path.get(0).children();
+                for (Element menuItem :
+                        table) {
+                    if(menuItem.text().equals("Mesajlar")) {
+                        Elements messages = menuItem.getElementsByAttributeValueContaining("title", "Mesajlar");
+                        String messagesLink = messages.attr("href");
+                        messagesLink = messagesLink + pvtMsg;
+                        Log.d("messages_mesajlar", messagesLink);
+
+                        okhttpGetLastMessageCall(client, messagesLink);
+                    }
+                }
+            }
+        });
+    }
+
+    public void okhttpGetLastMessageCall(OkHttpClient client, String url) {
+        okhttp3.Request lastMessageRequest = new okhttp3.Request.Builder()
+                .url(url)
+                //todo: there are some parameters to add
+                .build();
+
+        // CONST Parameters:
+        // msgForum:j_id_jsp_1819031275_29:0:privateForums:0:j_id_jsp_1819031275_35
+        // msgForum: msgForum
+        // msgForum:mainOrHp: pvtMsgHpView
+
+        // Non-Conts Parameters:
+        // javax.faces.ViewState
+        // pvtMsgTopicId
+
+        Call call = client.newCall(lastMessageRequest);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                // nothing.
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                String responseBodyString = response.body().string();
+
+                Document doc = Jsoup.parse(responseBodyString);
+
+                //Log.d("date_test", responseBodyString);
+                //Log.d("url_test", url);
+
+                Elements javax = doc.getElementsByAttributeValue("name", "javax.faces.ViewState");
+                Elements pvtMsgTopicId = doc.getElementsByAttributeValueContaining("title", "Gelen");
+                //Elements pvtMsgTopicID = doc.getElementsByAttribute("pvtMsgTopicId");
+                //Element pvtMsgTopicID = doc.getElementById("pvtMsgTopicId");
+                //Log.d("is_it_there", javax.val());
+                String pvtMsgTopicIdStr = formatMessageID(pvtMsgTopicId.toString());
+                //Log.d("formatted_text", pvtMsgTopicIdStr);
+                //Log.d("is_this_there", pvtMsgTopicID.toString());
+
+                RequestBody messagePayload = new FormBody.Builder()
+                        .add("msgForum:mainOrHp", "pvtMsgHpView")
+                        .add("msgForum", "msgForum")
+                        .add("msgForum:j_id_jsp_1819031275_29:0:privateForums:0:j_id_jsp_1819031275_35" , "msgForum:j_id_jsp_1819031275_29:0:privateForums:0:j_id_jsp_1819031275_35")
+                        .add("javax.faces.ViewState", javax.val())
+                        .add("pvtMsgTopicId" , pvtMsgTopicIdStr)
+                        .build();
+
+                //todo: get this part working, clean up the project and update it on github
+                //todo: fix the crash when apox includes a video!!
+                okhttpGetMessages(client, url, messagePayload);
+            }
+        });
+    }
+
+    public void okhttpGetMessages(OkHttpClient client, String url, RequestBody requestBody) {
+        okhttp3.Request lastMessageRequest = new okhttp3.Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+        Call call = client.newCall(lastMessageRequest);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                // nothing.
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                Context myContext = getApplicationContext();
+
+                String responseBodyString = response.body().string();
+
+                Document doc = Jsoup.parse(responseBodyString);
+
+                Elements selector = doc.getElementsByClass("date");
+
+                Element mainElement = selector.parents().first();
+                if(mainElement != null) {
+                    String classTitle = doc.getElementsByClass("Mrphs-hierarchy--siteName").attr("title");
+
+                    String title = null, date = null;
+                    Elements titleElements = mainElement.getElementsByClass("specialLink");
+                    Elements dateElements = mainElement.getElementsByClass("hidden");
+                    if(titleElements != null) {
+                        title = titleElements.text();
+                    }
+                    if(dateElements != null) {
+                        date = dateElements.text();
+                    }
+
+                    SharedPreferences sharedPreferences = myContext.getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                    // first time checking the messages
+                    if(!sharedPreferences.contains(classTitle)) {
+                        myEdit.putString(classTitle, date);
+                        myEdit.apply();
+                    }
+                    // sharedPreferences has previous records
+                    else {
+                        String savedDate = sharedPreferences.getString(classTitle, "def_date");
+
+                        // only trigger when two dates are different
+                        if(!date.equals(savedDate)) {
+                            myEdit.putString(classTitle, date);
+                            showNotif(myContext, 1, classTitle, title, "Yeni mesajınız var!", "https://online.deu.edu.tr/");
+                        }
+                    }
+
+                    //Log.d("changed_this", "\nclass: " + classTitle + "\ntitle: " + title + "\ndate: " + date);
+                }
+            }
+        });
+    }
+
+    private String formatMessageID(String text) {
+        String startSearch = "'pvtMsgTopicId':'";
+        String endSearch = "'}";
+
+        int beginIndex = text.indexOf(startSearch) + startSearch.length();
+        int endIndex = text.indexOf(endSearch, beginIndex);
+
+        text = text.substring(beginIndex, endIndex);
+        return text;
     }
 
 }

@@ -2,11 +2,15 @@ package com.salih.sakainotifier.fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +18,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -26,6 +32,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.salih.sakainotifier.MainActivity;
+import com.salih.sakainotifier.alarm_receiver.AlarmReceiver;
 import com.salih.sakainotifier.utilities.DownloadImageTask;
 import com.salih.sakainotifier.R;
 import com.salih.sakainotifier.utilities.Utility;
@@ -34,6 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -44,6 +53,7 @@ import java.net.CookiePolicy;
 import java.sql.ClientInfoStatus;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import io.reactivex.internal.observers.ForEachWhileObserver;
 import okhttp3.Call;
@@ -51,6 +61,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -122,23 +133,14 @@ public class ProfileFragment extends Fragment {
         libraryCardview.setOnClickListener(view1 -> {
             Utility.showShortToast("Merkez Kütüphane Doluluğu");
 
-            String username = sharedPreferences.getString("username","noUsername");
-            String password = sharedPreferences.getString("password", "noPassword");
+            //todo: delete (notification test for new message alert)
+            /*
+            String title = "Fen Fakültesi Seminer Komisyonu Öğrenci Seminer Beklenti Anketi";
+            String classTitle = "BİL 3102 Metin ve Web Madenciliğine Giriş 1.Sube (BİLGİSAYAR BİLİMLERİ)";
+            String date = "2022-03-11 12:28:11";
 
-            // --------------------------------------------------------------------
-            CookieManager cookieManager2 = new CookieManager();
-            cookieManager2.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-            OkHttpClient client2 = new OkHttpClient.Builder()
-                    .cookieJar(new JavaNetCookieJar(cookieManager2))
-                    .build();
-
-            RequestBody loginRequestBody = new FormBody.Builder()
-                    .add("eid", username + "@ogr.deu.edu.tr")
-                    .add("pw", password)
-                    .add("submit", "Giriş")
-                    .build();
-            okhttpLoginCall(client2, loginRequestBody);
-            // --------------------------------------------------------------------
+            showNotif(getContext(), 1, classTitle, title, "Yeni mesajınız var!", "https://online.deu.edu.tr/");
+             */
         });
         weatherCardview.setOnClickListener(view1 -> {
             Utility.showShortToast("Tınaztepe Kampüsü Hava Durumu");
@@ -435,135 +437,59 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    public void okhttpLoginCall(OkHttpClient client, okhttp3.RequestBody requestBody) {
-        final String pvtMsg = "/privateMsg/pvtMsg";
-        okhttp3.Request loginRequest = new okhttp3.Request.Builder()
-                .url("https://online.deu.edu.tr/portal/xlogin")
-                .post(requestBody)
-                .build();
+    private void createNotificationChannel(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = context.getString(R.string.channel_name);
+            String description = context.getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("newid", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+    public void showNotif(Context context, int id, String subText, String title, String siteTitle, @Nullable String url) {
+        createNotificationChannel(context);
 
-        Call call = client.newCall(loginRequest);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                // do nothing for now...
-            }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis (System.currentTimeMillis());
 
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
-                String responseBodyString = response.body().string();
+        // Set the intent that will fire when the user taps the notification
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-                Document doc = Jsoup.parse(responseBodyString);
-                Elements elements = doc.getElementsByAttributeValue("id", "topnav").get(0).children();
+        Intent fullScreenIntent = new Intent(context, AlarmReceiver.class);
+        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
+                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                // remove "anasayfa" from top navigation list
-                elements.remove(0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "newid")
+                .setGroup("test")
+                .setSmallIcon(R.drawable.ic_deunotif)
+                .setContentTitle(siteTitle)
+                .setContentText(title)
+                .setSubText(subText)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setAutoCancel(true)
+                .setFullScreenIntent(fullScreenPendingIntent, true);
 
-                for(Element x : elements) {
-                    Log.d("each_element_text", x.text());
-                    Element children = x.child(1);
-                    String url = children.attr("href");
+        if(url == null) {
+            builder.setContentIntent(pendingIntent);
+        } else {
+            Uri uri = Uri.parse(url);
+            Intent openPos = new Intent(Intent.ACTION_VIEW, uri);
+            PendingIntent pendingIntentPos = PendingIntent.getActivity(context, 0, openPos, 0);
 
-                    okhttpMessagesCall(client, url);
-                }
-            }
-        });
+            builder.setContentIntent(pendingIntentPos);
+        }
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        notificationManager.notify(id, builder.build());
     }
 
-    public void okhttpMessagesCall(OkHttpClient client, String url) {
-        final String pvtMsg = "/privateMsg/pvtMsgHpView";
-        okhttp3.Request messagesRequest = new okhttp3.Request.Builder()
-                .url(url)
-                .build();
-
-        Call call = client.newCall(messagesRequest);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                // do nothing for now...
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                String responseBodyString = response.body().string();
-
-                Document doc = Jsoup.parse(responseBodyString);
-                Elements path = doc.select("#toolMenu > ul");
-                Elements table = path.get(0).children();
-                for (Element menuItem :
-                        table) {
-                    if(menuItem.text().equals("Mesajlar")) {
-                        Elements messages = menuItem.getElementsByAttributeValueContaining("title", "Mesajlar");
-                        String messagesLink = messages.attr("href");
-                        messagesLink = messagesLink + pvtMsg;
-                        Log.d("messages_mesajlar", messagesLink);
-
-                        okhttpGetLastMessageCall(client, messagesLink);
-                    }
-                }
-            }
-        });
-    }
-
-    public void okhttpGetLastMessageCall(OkHttpClient client, String url) {
-        okhttp3.Request lastMessageRequest = new okhttp3.Request.Builder()
-                .url(url)
-                .build();
-
-        Call call = client.newCall(lastMessageRequest);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                // nothing.
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                String responseBodyString = response.body().string();
-
-                Document doc = Jsoup.parse(responseBodyString);
-
-                String newUrl = url.substring(0, url.length()-6);
-
-                Log.d("date_test", responseBodyString);
-                // msgForum:j_id_jsp_1819031275_29:0:privateForums:0:j_id_jsp_1819031275_35
-                // msgForum: msgForum
-                // msgForum:mainOrHp: pvtMsgHpView
-
-                // javax.faces.ViewState
-                // pvtMsgTopicId
-
-                Elements javax = doc.getElementsByAttributeValue("name", "javax.faces.ViewState");
-                //Elements pvtMsgTopicID = doc.getElementsByAttribute("pvtMsgTopicId");
-                //Element pvtMsgTopicID = doc.getElementById("pvtMsgTopicId");
-                Log.d("is_it_there", javax.toString());
-                //Log.d("is_this_there", pvtMsgTopicID.toString());
-                
-                //okhttpGetMessages(client, newUrl);
-            }
-        });
-    }
-
-    public void okhttpGetMessages(OkHttpClient client, String url) {
-        okhttp3.Request lastMessageRequest = new okhttp3.Request.Builder()
-                .url(url)
-                .build();
-
-        Call call = client.newCall(lastMessageRequest);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                // nothing.
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                String responseBodyString = response.body().string();
-
-                Document doc = Jsoup.parse(responseBodyString);
-
-            }
-        });
-    }
 }
 

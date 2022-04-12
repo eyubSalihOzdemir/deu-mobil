@@ -278,7 +278,7 @@ public class GradesFragment extends Fragment {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
+                // do nothing...
             }
 
             @Override
