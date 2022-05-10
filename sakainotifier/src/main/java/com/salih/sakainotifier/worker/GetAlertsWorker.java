@@ -85,8 +85,11 @@ public class GetAlertsWorker extends Worker {
         username = user;
         password = pass;
 
-        setForegroundAsync(createForegroundInfo());
+        Log.d("progress_test", "doWork ran");
+        //todo: remove this
+        //showNotif(myContext, 5, "from", "doWork Ran", "siteTitle", null);
 
+        setForegroundAsync(createForegroundInfo());
         postRequest(myContext);
 
         // OKHTTP -----------------------------------------------
@@ -102,7 +105,7 @@ public class GetAlertsWorker extends Worker {
                 .add("submit", "Giriş")
                 .build();
 
-        okhttpLoginCall(client, loginRequestBody);
+        //okhttpLoginCall(client, loginRequestBody);
         //-------------------------------------------------------
 
         return Result.success();
@@ -114,13 +117,15 @@ public class GetAlertsWorker extends Worker {
         Context context = getApplicationContext();
 
         //todo: check if this is necessary, the call is being made already in doWork()
-        postRequest(context);
+        //postRequest(context);
+
+        Log.d("progress_test", "createForegroundInfo ran");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel chan = new NotificationChannel("1", "channelName", NotificationManager.IMPORTANCE_NONE);
             chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
             NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            assert manager != null;
+            //assert manager != null;
             manager.createNotificationChannel(chan);
         }
 
@@ -181,23 +186,36 @@ public class GetAlertsWorker extends Worker {
     }
 
     public void showNotif(Context context, int id, String fromWhom, String title, String siteTitle, @Nullable String url) {
+        Log.d("progress_test", "showNotif ran");
+
         createNotificationChannel(context);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis (System.currentTimeMillis());
 
-        Uri uri = Uri.parse(url);
-        Intent openPos = new Intent(Intent.ACTION_VIEW, uri);
-        PendingIntent pendingIntentPos = PendingIntent.getActivity(context, 0, openPos, 0);
+        //Uri uri = Uri.parse(url);
+        //Intent openPos = new Intent(Intent.ACTION_VIEW, uri);
+        //PendingIntent pendingIntentPos = PendingIntent.getActivity(context, 0, openPos, 0);
 
         // Set the intent that will fire when the user taps the notification
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        PendingIntent pendingIntent = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        }
 
         Intent fullScreenIntent = new Intent(context, AlarmReceiver.class);
-        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
-                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent fullScreenPendingIntent = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
+                    fullScreenIntent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
+                    fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "newid")
                 .setGroup("test")
@@ -213,7 +231,7 @@ public class GetAlertsWorker extends Worker {
         if(url == null) {
             builder.setContentIntent(pendingIntent);
         } else {
-            builder.setContentIntent(pendingIntentPos);
+            //builder.setContentIntent(pendingIntentPos);
         }
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
@@ -229,15 +247,17 @@ public class GetAlertsWorker extends Worker {
 
         // yemekhane haftalık reminder
         java.util.Date date = new java.util.Date();
-        if(date.getDay() == 5 && date.getHours() >= 10 && date.getHours() <= 14 && remindWeeklyFood) {
+        if(date.getDay() == 5 && date.getHours() >= 9 && date.getHours() <= 14 && remindWeeklyFood) {
             //showNotif(context, i, fromWhom, title, siteTitle, url);
             //todo: create new function for open deu.pos intent
             showNotif(context, 99, "", "14:30'a kadar vaktin var", "Haftalık yemek yüklemeyi unutma", "https://pos.deu.edu.tr/");
             myEdit.putBoolean("remindWeeklyFood", false);
+            myEdit.apply();
         }
 
         if(date.getDay() != 5) {
             myEdit.putBoolean("remindWeeklyFood", true);
+            myEdit.apply();
         }
 
         CookieManager manager = new CookieManager();
@@ -385,7 +405,7 @@ public class GetAlertsWorker extends Worker {
                             }
                         } else { // first time running
                             //showNotifText(context, "first time running, send new message to test");
-                            Log.d("RUN", "first tim running");
+                            Log.d("RUN", "first time running");
                             try {
                                 JSONObject jsonResponseObject = new JSONObject(response);
                                 JSONArray alertsJsonArray = jsonResponseObject.getJSONArray("alerts");
@@ -557,7 +577,6 @@ public class GetAlertsWorker extends Worker {
                         .build();
 
                 //todo: get this part working, clean up the project and update it on github
-                //todo: fix the crash when apox includes a video!!
                 okhttpGetMessages(client, url, messagePayload);
             }
         });
@@ -612,7 +631,7 @@ public class GetAlertsWorker extends Worker {
                         String savedDate = sharedPreferences.getString(classTitle, "def_date");
 
                         // only trigger when two dates are different
-                        if(!date.equals(savedDate)) {
+                        if(date != null && date.equals(savedDate)) {
                             myEdit.putString(classTitle, date);
                             showNotif(myContext, 1, classTitle, title, "Yeni mesajınız var!", "https://online.deu.edu.tr/");
                         }

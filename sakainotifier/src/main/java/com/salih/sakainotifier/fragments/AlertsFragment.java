@@ -38,11 +38,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AlertsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AlertsFragment extends Fragment {
 
     public AlertsFragment() {

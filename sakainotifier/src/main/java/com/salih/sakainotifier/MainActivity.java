@@ -10,6 +10,7 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -84,6 +85,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadActivity() {
+
+        setWork();
+
+        OneTimeWorkRequest firstAlertRequest = new OneTimeWorkRequest.Builder(GetAlertsWorker.class).build();
+
+        PeriodicWorkRequest alertsRequest =
+                new PeriodicWorkRequest.Builder(GetAlertsWorker.class, 15, TimeUnit.MINUTES) // ,PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS
+                        //.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST) // makes the app crash on startup
+                        //.setInitialDelay(100, TimeUnit.MILLISECONDS)
+                        .build();
+        //WorkManager.getInstance(getApplicationContext()).beginUniqueWork("firstAlertRequest", ExistingWorkPolicy.REPLACE, firstAlertRequest);
+        //WorkManager.getInstance(getApplicationContext()).enqueueUniqueWork("firstAlertRequest", ExistingWorkPolicy.REPLACE, firstAlertRequest);
+        //WorkManager.getInstance(getApplicationContext()).enqueueUniqueWork("firstAlertRequestInitial", ExistingWorkPolicy.REPLACE, firstAlertRequest);
+        //WorkManager.getInstance(getApplicationContext()).enqueueUniquePeriodicWork("alertRequest", ExistingPeriodicWorkPolicy.REPLACE, alertsRequest);
+
         //  load the second activity that contains the navigation bar and fragments
         Intent loggedInIntent = new Intent(MainActivity.this, NavigationBarActivity.class);
         startActivity(loggedInIntent);
@@ -94,14 +110,14 @@ public class MainActivity extends AppCompatActivity {
         WorkManager.getInstance(getApplicationContext()).cancelAllWork();
 
         PeriodicWorkRequest alertsRequest =
-                new PeriodicWorkRequest.Builder(GetAlertsWorker.class, 15, TimeUnit.MINUTES) // ,PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS
+                new PeriodicWorkRequest.Builder(GetAlertsWorker.class, PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS) // ,PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS
                         //.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST) // makes the app crash on startup
-                        //.setInitialDelay(100, TimeUnit.MILLISECONDS)
+                        //.setInitialDelay(500, TimeUnit.MILLISECONDS)
                         .build();
 
         OneTimeWorkRequest firstAlertRequest = new OneTimeWorkRequest.Builder(GetAlertsWorker.class).build();
 
-        WorkManager.getInstance(getApplicationContext()).enqueueUniqueWork("firstAlertRequest", ExistingWorkPolicy.REPLACE, firstAlertRequest);
+        //WorkManager.getInstance(getApplicationContext()).enqueueUniqueWork("firstAlertRequest", ExistingWorkPolicy.REPLACE, firstAlertRequest);
         WorkManager.getInstance(getApplicationContext()).enqueueUniquePeriodicWork("alertRequest", ExistingPeriodicWorkPolicy.REPLACE, alertsRequest);
     }
 
@@ -173,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                     myEdit.putString("password", password);
                     myEdit.apply();
 
-                    setWork();
+                    //setWork();
 
                     String begin = "title=\"Genel Bakış";
                     String endLink = "\" title=\"Profil";
