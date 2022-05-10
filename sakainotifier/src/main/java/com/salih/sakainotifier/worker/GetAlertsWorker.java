@@ -631,9 +631,11 @@ public class GetAlertsWorker extends Worker {
                         String savedDate = sharedPreferences.getString(classTitle, "def_date");
 
                         // only trigger when two dates are different
-                        if(date != null && date.equals(savedDate)) {
+                        // if(date != null && date.equals(savedDate)) {
+                        if(date.equals(savedDate)) {
                             myEdit.putString(classTitle, date);
-                            showNotif(myContext, 1, classTitle, title, "Yeni mesajınız var!", "https://online.deu.edu.tr/");
+                            //showNotif(myContext, 1, classTitle, title, "Yeni mesajınız var!", "https://online.deu.edu.tr/");
+                            showNotif(myContext, 1, classTitle, date + " - " + savedDate, "Yeni mesajınız var!", "https://online.deu.edu.tr/");
                         }
                     }
 
