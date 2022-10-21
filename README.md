@@ -1,7 +1,8 @@
 # DEU Mobil
 
 My first native Android app, made for an easier use of school websites and tools for Dokuz Eylul University students.
-#### It's current in early access and still being developed.
+#### ~~It's current in early access and still being developed.~~
+#### Unfortunately this app is DISCONTINUED due to the change of priorities in my development schedule.
 
 ## Play Store:
 https://play.google.com/store/apps/details?id=com.salih.sakainotifier
